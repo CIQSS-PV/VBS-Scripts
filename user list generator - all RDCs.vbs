@@ -1,5 +1,5 @@
 'Prepared by Philippe Valois, CIQSS
-'Questions ? philippe.valois@umontreal.ca
+'Questions ? philippe.valois@ciqss.org
 
 Option Explicit
 
@@ -10,7 +10,7 @@ rdcs = Array("BCI", "COOL", "Guelph", "Laval", "LETH", "MCG". "McMaster","MCT","
 Const xlExcel7 = 39
 pouet = ""
 k=1
-' Spreadsheet file to be created.
+' Spreadsheet file to be created. Used to work well in XP... might need to look at it.
 Set objExcel = CreateObject("Excel.Application")
 	If (Err.Number <> 0) Then
 		On Error GoTo 0
