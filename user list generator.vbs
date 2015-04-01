@@ -74,7 +74,8 @@ objSheet.Range("B5").Select
 'objExcel.ActiveWindow.FreezePanes = True
 objExcel.Columns(1).ColumnWidth = 40
 objExcel.Columns(2).ColumnWidth = 30
-objExcel.Columns(3).ColumnWidth = 250
+objExcel.Columns(3).ColumnWidth = 30
+objExcel.Columns(4).ColumnWidth = 250
 
 ' Save the spreadsheet and close the workbook.
 ' Specify Excel7 File Format.
