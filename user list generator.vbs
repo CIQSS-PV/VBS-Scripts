@@ -2,20 +2,23 @@
 
 Option Explicit
 
-Dim objUser, strExcelPath, strOU, objExcel, objSheet, k, objGroup, objAllUsers, groupList, objRootDSE, strDNSDomain
+Dim objFSO, rangeFormat, WSHshell, DesktopPath, objUser, strExcelPath, strOU, objExcel, objSheet, k, objGroup, objAllUsers, groupList, objRootDSE, strDNSDomain
 
 Const xlExcel7 = 39
 groupList = ""
 ' User object whose group membership will be documented in the
 ' spreadsheet.
-
+set objFSO=CreateObject("Scripting.FileSystemObject")
+Set WSHshell = CreateObject("WScript.Shell")
+DesktopPath = WSHShell.SpecialFolders("Desktop")
 
 Set objRootDSE = GetObject("LDAP://RootDSE")
 strDNSDomain = objRootDSE.Get("defaultNamingContext")
 
-strExcelPath = InputBox( "Where do you want to save the Excel report? Don't forget to add the .xls extension!","Save as","c:\userlist.xls")
-
 strOU = InputBox("Which RDC would you like to analyze? (Use the abbreviation displayed in Active Directory) Example: MTL or Toronto","OU to analyze","Toronto") 
+
+strExcelPath = (DesktopPath) & "\user list - " & strOU & " - " &Date &".xls"
+
 Set objAllUsers=GetObject("LDAP://ou=Researchers,ou=" & strOU & ",ou=RDC Accounts," & strDNSDomain)
 objAllUsers.Filter = Array("User")
 k=1
@@ -34,7 +37,7 @@ objExcel.Workbooks.Add
 
 ' Bind to worksheet.
 Set objSheet = objExcel.ActiveWorkbook.Worksheets(1)
-objSheet.Name = "User Groups"
+objSheet.Name = "Users"
 
 objSheet.Cells(1, 1).Value = "Name"
 objSheet.Cells(1, 2).Value = "Username"
@@ -61,27 +64,24 @@ On Error Resume Next
 	Next
 	objSheet.Cells(k, 4).Value = groupList
 	groupList=""
-	'WScript.Echo objUser.cn & "OK"
 Next
 
 ' Format the spreadsheet.
 'objSheet.Range("A1:A5").Font.Bold = True
 objSheet.Rows(1).Font.Bold = True
 
-objSheet.Select
-objSheet.Range("B5").Select
 'objExcel.ActiveWindow.FreezePanes = True
-objExcel.Columns(1).ColumnWidth = 40
-objExcel.Columns(2).ColumnWidth = 30
-objExcel.Columns(3).ColumnWidth = 15
-objExcel.Columns(4).ColumnWidth = 250
+'Autofit all columns
+objExcel.ActiveSheet.Columns.EntireColumn.AutoFit
+rangeFormat= "C"&k
+objSheet.Range("C2", rangeFormat).NumberFormat = "yyyy-mm-dd"
 
 ' Save the spreadsheet and close the workbook.
 ' Specify Excel7 File Format.
-objExcel.ActiveWorkbook.SaveAs strExcelPath, xlExcel7
+objExcel.ActiveWorkbook.SaveAs (strExcelPath), xlExcel7
 objExcel.ActiveWorkbook.Close
 
 ' Quit Excel.
 objExcel.Application.Quit
 
-Wscript.Echo k-1 & " users were processed"
+Wscript.Echo k-1 & " users were processed. The file was saved on the desktop."
