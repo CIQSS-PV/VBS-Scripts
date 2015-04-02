@@ -1,12 +1,11 @@
 'Prepared by Philippe Valois, CIQSS
-'Questions ? philippe.valois@ciqss.org
 
 Option Explicit
 
-Dim objUser, strExcelPath, strOU, objExcel, objSheet, k, objGroup, objAllUsers, pouet, objRootDSE, strDNSDomain
+Dim objUser, strExcelPath, strOU, objExcel, objSheet, k, objGroup, objAllUsers, groupList, objRootDSE, strDNSDomain
 
 Const xlExcel7 = 39
-pouet = ""
+groupList = ""
 ' User object whose group membership will be documented in the
 ' spreadsheet.
 
@@ -20,7 +19,7 @@ strOU = InputBox("Which RDC would you like to analyze? (Use the abbreviation dis
 Set objAllUsers=GetObject("LDAP://ou=Researchers,ou=" & strOU & ",ou=RDC Accounts," & strDNSDomain)
 objAllUsers.Filter = Array("User")
 k=1
-' Spreadsheet file to be created. Used to work well in XP... might need to look at it.
+' Spreadsheet file to be created.
 
 Set objExcel = CreateObject("Excel.Application")
 If (Err.Number <> 0) Then
@@ -39,7 +38,8 @@ objSheet.Name = "User Groups"
 
 objSheet.Cells(1, 1).Value = "Name"
 objSheet.Cells(1, 2).Value = "Username"
-objSheet.Cells(1, 3).Value = "Security groups"
+objSheet.Cells(1, 3).Value = "Expiry date"
+objSheet.Cells(1, 4).Value = "Security groups"
 
 
 For Each objUser in objAllUsers
@@ -49,17 +49,18 @@ On Error Resume Next
 	' Populate spreadsheet cells with user attributes.
 	k=k+1	
 	objSheet.Cells(k, 1).Value = objUser.cn
-	objSheet.Cells(k, 2).Value = objUser.sAMAccountName	
+	objSheet.Cells(k, 2).Value = objUser.sAMAccountName
+	objSheet.Cells(k, 3).Value = objUser.AccountExpirationDate 
 	If objUser.userAccountControl=514 Then
 	objSheet.Rows(k).Font.ColorIndex = 3
 	End If
 	
 	' Enumerate groups and add group names to spreadsheet.
 	For Each objGroup In objUser.Groups
-		pouet = pouet & objGroup.sAMAccountName & ", " 		
+		groupList = groupList & objGroup.sAMAccountName & ", " 		
 	Next
-	objSheet.Cells(k, 3).Value = pouet
-	pouet=""
+	objSheet.Cells(k, 4).Value = groupList
+	groupList=""
 	'WScript.Echo objUser.cn & "OK"
 Next
 
@@ -72,7 +73,8 @@ objSheet.Range("B5").Select
 'objExcel.ActiveWindow.FreezePanes = True
 objExcel.Columns(1).ColumnWidth = 40
 objExcel.Columns(2).ColumnWidth = 30
-objExcel.Columns(3).ColumnWidth = 250
+objExcel.Columns(3).ColumnWidth = 15
+objExcel.Columns(4).ColumnWidth = 250
 
 ' Save the spreadsheet and close the workbook.
 ' Specify Excel7 File Format.
