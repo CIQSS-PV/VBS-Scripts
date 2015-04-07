@@ -5,7 +5,7 @@ Option Explicit
 
 Dim objUser, strExcelPath, strOU, objExcel, objSheet, k, objGroup, objAllUsers, pouet, objRootDSE, strDNSDomain, rdcs, rdc
 
-rdcs = Array("BCI", "COOL", "Guelph", "Laval", "LETH", "MCG". "McMaster","MCT","MTL","MUN","PRC","QUE","SFU","SHER","SKY","Toronto","UAB","UDAL","UNB","UQAM","VIC","Waterloo","Western","WIND","Winnipeg","York")
+rdcs = Array("BCI", "COOL", "Guelph", "Laval", "LETH", "MCG", "McMaster","MCT","MTL","MUN","PRC","QUE","SFU","SHER","SKY","Toronto","UAB","UDAL","UNB","UQAM","VIC","Waterloo","Western","WIND","Winnipeg","York")
 
 Const xlExcel7 = 39
 pouet = ""
